@@ -1,12 +1,14 @@
 import jwt
-from ninja import Router, NinjaAPI, Schema
+from ninja import Router
 from ninja.security import HttpBearer
 from ninja.errors import AuthenticationError, ValidationError
 
-
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from .schema import UserRegistrationSchema, TokenSchema
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
+
+from .schema import UserRegistrationSchema, UserLoginSchema
 from .models import CustomUser
 from .utils import create_access_token, create_refresh_token, validate_credentials
 
@@ -63,21 +65,43 @@ def register_user(request, payload: UserRegistrationSchema):
     access_token, refresh_token = create_access_token(user.email), create_refresh_token(
         user.email
     )
+    return 201, {"access": access_token, "refresh_token": refresh_token}
+
+
+@router.post("/login")
+def login_user(request, payload: UserLoginSchema):
+    email = payload.email
+    password = payload.password
+    try:
+        user = CustomUser.objects.get(email=email)
+    except CustomUser.DoesNotExist:
+        raise ValidationError({"message": "Incorrect email"})
+    password_match = check_password(password, user.password)
+    if not password_match:
+        raise ValidationError({"message": "Incorrect password"})
+    access_token, refresh_token = create_access_token(user.email), create_refresh_token(
+        user.email
+    )
     return 200, {"access": access_token, "refresh_token": refresh_token}
 
 
 @router.post("/token")
 def refresh_token(request, payload):
-    token = payload.dict().get("token", None)
+    token = payload
     if token is not None:
         try:
             jwt_payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY_REFRESH,
-            algorithm=settings.JWT_HASHING_ALGORITHM,
-        )
+                token,
+                settings.JWT_SECRET_KEY_REFRESH,
+                algorithms=[
+                    settings.JWT_HASHING_ALGORITHM,
+                ],
+            )
         except jwt.PyJWTError as e:
-            return ValidationError({'message': 'Invalid token.'})
-        
-        
-    return 401, {"message": "Token not valid"}
+            raise ValidationError({"message": "Invalid token. Decode failed."})
+        user_email = jwt_payload.get("sub", None)
+        if user_email is None:
+            raise ValidationError({"message": "Invalid Token"})
+        access_token = create_access_token(user_email)
+        return 200, {"access": access_token}
+    return 401, {"message": "Invalid token."}

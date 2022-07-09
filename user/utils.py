@@ -16,7 +16,7 @@ def create_access_token(email):
     JWT_SECRET_KEY = getattr(settings, "JWT_SECRET_KEY", None)
     JWT_HASHING_ALGORITHM = getattr(settings, "JWT_HASHING_ALGORITHM", None)
     jwt_expiry_date = datetime.utcnow() + timedelta(
-        days=settings.JWT_ACCESS_EXPIRY_IN_DAYS
+        minutes=settings.JWT_ACCESS_EXPIRY_IN_DAYS
     )
     payload = {"sub": email, "exp": jwt_expiry_date}
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_HASHING_ALGORITHM)
