@@ -1,8 +1,9 @@
 from ninja import Router
 from .schema import TriviaCategorySchema
 from .models import TriviaCategory as TriviaCategoryModel
+from user.api import AuthBearer
 
-router = Router()
+router = Router(auth=AuthBearer())
 
 
 @router.get("/trivia-categories")

@@ -16,7 +16,7 @@ def get_awards(request):
     return 200, awards
 
 
-@router.post("/")
+@router.post("/create")
 def create_award(request, payload: AwardSchema):
     award = AwardModel(**payload.dict())
     award.save()
