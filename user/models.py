@@ -1,9 +1,11 @@
 import uuid
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 
 from .managers import CustomUserManager
+from abstract_models import TimeStampedModel
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -22,3 +24,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserToken(TimeStampedModel):
+    user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.TextField(max_length=200)
+
+    class Meta:
+        ordering = ["-created_date"]
+
+    def __str__(self):
+        return f"Token for {self.user}"

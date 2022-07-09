@@ -5,11 +5,10 @@ from ninja.errors import AuthenticationError, ValidationError
 
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 
-from .schema import UserRegistrationSchema, UserLoginSchema
-from .models import CustomUser
+from .schema import UserRegistrationSchema, UserLoginSchema, CurrentUserSchema
+from .models import CustomUser, UserToken
 from .utils import create_access_token, create_refresh_token, validate_credentials
 
 
@@ -27,15 +26,15 @@ class AuthBearer(HttpBearer):
             email = payload.get("sub")
             if email is None:
                 raise ValidationError({"message": "Token verification failed."})
-            try:
-                user = get_object_or_404(CustomUser, email=email)
-            except CustomUser.DoesNotExist:
-                raise AuthenticationError(
-                    {"message": "Authentication failed. User does not exist."}
-                )
+            # try:
+            #     user = get_object_or_404(CustomUser, email=email)
+            # except CustomUser.DoesNotExist:
+            #     raise AuthenticationError(
+            #         {"message": "Authentication failed. User does not exist."}
+            #     )
         except jwt.PyJWTError as e:
             raise ValidationError({"message": "Token verification failed."})
-        return user
+        return email
 
 
 router = Router()
@@ -65,6 +64,7 @@ def register_user(request, payload: UserRegistrationSchema):
     access_token, refresh_token = create_access_token(user.email), create_refresh_token(
         user.email
     )
+    user.usertoken.token = refresh_token
     return 201, {"access": access_token, "refresh_token": refresh_token}
 
 
@@ -79,14 +79,17 @@ def login_user(request, payload: UserLoginSchema):
     password_match = check_password(password, user.password)
     if not password_match:
         raise ValidationError({"message": "Incorrect password"})
-    access_token, refresh_token = create_access_token(user.email), create_refresh_token(
-        user.email
-    )
+    try:
+        refresh_token = UserToken.objects.get(user=user)
+    except UserToken.DoesNotExist:
+        refresh_token = create_refresh_token(user.email)
+        user.usertoken.token = refresh_token
+    access_token = create_access_token(user.email)
     return 200, {"access": access_token, "refresh_token": refresh_token}
 
 
 @router.post("/token")
-def refresh_token(request, payload):
+def refresh_token(request, payload: str):
     token = payload
     if token is not None:
         try:
@@ -105,3 +108,15 @@ def refresh_token(request, payload):
         access_token = create_access_token(user_email)
         return 200, {"access": access_token}
     return 401, {"message": "Invalid token."}
+
+
+@router.get("/current-user", auth=AuthBearer())
+def get_current_user(request):
+    try:
+        user = CustomUser.objects.prefetch_related('usertoken').get(email=request.auth)
+        refresh_token = user.usertoken.token
+    except CustomUser.DoesNotExist:
+        raise ValidationError(
+            {"message": "Authentication failed, User does not exist."}
+        )
+    return 200, {"email": user.email, "refresh": refresh_token}

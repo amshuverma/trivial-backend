@@ -12,3 +12,8 @@ class UserRegistrationSchema(Schema):
 class UserLoginSchema(Schema):
     email: str
     password: str
+
+
+class CurrentUserSchema(Schema):
+    email: str
+    refresh: str
