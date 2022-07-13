@@ -5,18 +5,21 @@ from config.settings import (
 )
 import jwt
 from ninja.errors import ValidationError
-from validate_email import validate_email
-from password_validator import PasswordValidator
-from datetime import datetime, timedelta
 
+from datetime import datetime, timedelta
 from django.conf import settings
+from django.core.cache import cache
+from django.core.validators import validate_email as _validate_email
+from django.core.exceptions import ValidationError
+
+from password_validator import PasswordValidator
 
 
 def create_access_token(email):
     JWT_SECRET_KEY = getattr(settings, "JWT_SECRET_KEY", None)
     JWT_HASHING_ALGORITHM = getattr(settings, "JWT_HASHING_ALGORITHM", None)
     jwt_expiry_date = datetime.utcnow() + timedelta(
-        minutes=settings.JWT_ACCESS_EXPIRY_IN_DAYS
+        days=settings.JWT_ACCESS_EXPIRY_IN_DAYS
     )
     payload = {"sub": email, "exp": jwt_expiry_date}
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_HASHING_ALGORITHM)
@@ -34,14 +37,30 @@ def create_refresh_token(email):
     return token
 
 
-password_schema = PasswordValidator()
-
-password_schema.min(8).max(100).has().digits().has().no().spaces()
-
-
-def validate_credentials(email, password):
-    email_is_valid = validate_email(email)
-    password_is_valid = password_schema.validate(password)
-    if email_is_valid and password_is_valid:
+def token_blacklisted(token):
+    is_blacklisted = cache.get(f"rf_{token}")
+    if is_blacklisted is not None:
         return True
     return False
+
+
+def validate_email(email):
+    try:
+        validated_email = _validate_email(email)
+    except ValidationError as e:
+        return False
+    return True
+
+
+passwordValidationSchema = PasswordValidator()
+
+passwordValidationSchema\
+.min(8)\
+.max(100)\
+.has().uppercase()\
+.has().lowercase()\
+.has().digits()\
+.has().no().spaces()
+
+def validate_password(password):
+    return passwordValidationSchema.validate(password)

@@ -57,16 +57,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-REDIS_ACL_USERNAME = env('REDIS_ACL_USERNAME')
-REDIS_ACL_PASSWORD = env('REDIS_ACL_PASSWORD')
+REDIS_ACL_USERNAME = env("REDIS_ACL_USERNAME")
+REDIS_ACL_PASSWORD = env("REDIS_ACL_PASSWORD")
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": f"redis://{env('REDIS_HOST')}:6379/1",
+        # "LOCATION": f"redis://127.1.1.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
     }
 }
 
