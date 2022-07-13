@@ -57,6 +57,22 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
+REDIS_ACL_USERNAME = env('REDIS_ACL_USERNAME')
+REDIS_ACL_PASSWORD = env('REDIS_ACL_PASSWORD')
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -138,3 +154,5 @@ JWT_SECRET_KEY_REFRESH = env("JWT_SECRET_KEY_REFRESH")
 JWT_ACCESS_EXPIRY_IN_DAYS = int(env("JWT_ACCESS_EXPIRY_IN_DAYS"))
 JWT_REFRESH_EXPIRY_IN_DAYS = int(env("JWT_REFRESH_EXPIRY_IN_DAYS"))
 JWT_HASHING_ALGORITHM = env("JWT_HASHING_ALGORITHM")
+
+ALLOWED_HOSTS = ["*"]
