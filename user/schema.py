@@ -1,5 +1,6 @@
 from ninja import Schema
 from ninja.errors import ValidationError
+from uuid import UUID
 
 from pydantic import validator, root_validator
 
@@ -41,8 +42,6 @@ class UserRegistrationSchema(Schema):
     )
 
     class Config(Schema.Config):
-        anystr_strip_whitespace = True
-        anystr_lower = True
         max_anystr_length = 30
         max_anystr_length = 30
 
@@ -55,3 +54,9 @@ class UserLoginSchema(Schema):
 class CurrentUserSchema(Schema):
     email: str
     refresh: str
+
+class UserOutSchema(Schema):
+    email: str
+    first_name: str
+    last_name: str
+    country: str

@@ -12,7 +12,6 @@ router = Router(auth=AuthBearer())
 @router.get("/", response=List[AwardSchema])
 def get_awards(request):
     awards = AwardModel.objects.all()
-    print(request.auth.first_name)
     return 200, awards
 
 

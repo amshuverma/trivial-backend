@@ -17,10 +17,10 @@ from .utils import (
     token_blacklisted,
 )
 
-
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):
         is_blacklisted = cache.get(f"ac_{token}")
+        print(is_blacklisted)
         if is_blacklisted is not None:
             raise ValidationError("Token not authorized.")
         try:
@@ -137,7 +137,6 @@ def logout(request):
         raise ValidationError("Logout failed, User does not exist.")
     token = user.usertoken
     cache.set(f"rf_{token.token}", token.token)
-    cache.set(f"ac_{token.token}", token.token, timeout=86400)
     token.token = ""
     token.save()
     return 200, {"message": "Token invalidated. Logout successful"}
