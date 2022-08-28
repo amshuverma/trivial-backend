@@ -1,7 +1,8 @@
 import uuid
-from django.db import models
+
 from abstract_models import TimeStampedModel
 from django.conf import settings
+from django.db import models
 
 
 class TriviaCategory(TimeStampedModel):
@@ -56,7 +57,9 @@ class Trivia(TimeStampedModel):
 
 class UserTriviaLog(TimeStampedModel):
     session_id = models.UUIDField(unique=True, editable=False, default=uuid.uuid4)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
+    )
     total_correct_answers = models.IntegerField(null=False, blank=False)
     total_wrong_answers = models.IntegerField(null=False, blank=False)
     total_time_spent_in_seconds = models.IntegerField(null=False, blank=False)

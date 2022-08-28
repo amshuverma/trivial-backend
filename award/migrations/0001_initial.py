@@ -9,36 +9,72 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Award',
+            name="Award",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('updated_date', models.DateField(auto_now=True)),
-                ('uid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='Public Identifier')),
-                ('name', models.CharField(max_length=200, verbose_name='Award Name')),
-                ('description', models.TextField(verbose_name='Award Description')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateField(auto_now_add=True)),
+                ("updated_date", models.DateField(auto_now=True)),
+                (
+                    "uid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="Public Identifier",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, verbose_name="Award Name")),
+                ("description", models.TextField(verbose_name="Award Description")),
             ],
             options={
-                'verbose_name_plural': 'Awards',
-                'ordering': ['-name'],
+                "verbose_name_plural": "Awards",
+                "ordering": ["-name"],
             },
         ),
         migrations.CreateModel(
-            name='AwardUser',
+            name="AwardUser",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('updated_date', models.DateField(auto_now=True)),
-                ('uid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='Public Identifier')),
-                ('award', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='award.award')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateField(auto_now_add=True)),
+                ("updated_date", models.DateField(auto_now=True)),
+                (
+                    "uid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="Public Identifier",
+                    ),
+                ),
+                (
+                    "award",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="award.award"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Awards - Users',
+                "verbose_name_plural": "Awards - Users",
             },
         ),
     ]

@@ -1,21 +1,17 @@
 import jwt
-from ninja import Router
-from ninja.security import HttpBearer
-from ninja.errors import ValidationError, HttpError
-
-from django.db import transaction
-from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
+from django.core.cache import cache
+from django.db import transaction
+from ninja import Router
+from ninja.errors import HttpError, ValidationError
+from ninja.security import HttpBearer
 
-from .schema import UserRegistrationSchema, UserLoginSchema, CurrentUserSchema
-from .observer import save_or_update_refresh_token
 from .models import CustomUser, UserToken
-from .utils import (
-    create_access_token,
-    create_refresh_token,
-    token_blacklisted,
-)
+from .observer import save_or_update_refresh_token
+from .schema import CurrentUserSchema, UserLoginSchema, UserRegistrationSchema
+from .utils import create_access_token, create_refresh_token, token_blacklisted
+
 
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):

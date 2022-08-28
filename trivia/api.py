@@ -1,9 +1,11 @@
-from ninja import Router
 from typing import List
 
-from .schema import TriviaCategoryInSchema, TriviaCategoryOutSchema, AllTriviaSchema, TriviaLogOutSchema
-from .models import TriviaCategory as TriviaCategory, Trivia, UserTriviaLog
+from ninja import Router
 from user.api import AuthBearer
+
+from .models import Trivia, TriviaCategory, UserTriviaLog
+from .schema import (AllTriviaSchema, TriviaCategoryInSchema,
+                     TriviaCategoryOutSchema, TriviaLogOutSchema)
 
 router = Router(auth=AuthBearer())
 
@@ -16,7 +18,7 @@ def get_trivia_categories(request):
 
 @router.post("/trivia-categories")
 def create_trivia_category(request, payload: TriviaCategoryInSchema):
-    trivia_category = TriviaCategoryModel(**payload.dict())
+    trivia_category = TriviaCategory(**payload.dict())
     trivia_category.save()
     return 200, {"trivia_category_id": trivia_category.uid}
 

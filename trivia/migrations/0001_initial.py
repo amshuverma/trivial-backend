@@ -9,60 +9,116 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Trivia',
+            name="Trivia",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('updated_date', models.DateField(auto_now=True)),
-                ('uid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='Public Identifier')),
-                ('question', models.TextField(verbose_name='Trivia Questions')),
-                ('option_1', models.CharField(max_length=200)),
-                ('option_2', models.CharField(max_length=200)),
-                ('option_3', models.CharField(max_length=200)),
-                ('correct_option', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateField(auto_now_add=True)),
+                ("updated_date", models.DateField(auto_now=True)),
+                (
+                    "uid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="Public Identifier",
+                    ),
+                ),
+                ("question", models.TextField(verbose_name="Trivia Questions")),
+                ("option_1", models.CharField(max_length=200)),
+                ("option_2", models.CharField(max_length=200)),
+                ("option_3", models.CharField(max_length=200)),
+                ("correct_option", models.CharField(max_length=200)),
             ],
             options={
-                'verbose_name': 'Trivia Question',
-                'verbose_name_plural': 'Trivia Questions',
-                'ordering': ['created_date'],
+                "verbose_name": "Trivia Question",
+                "verbose_name_plural": "Trivia Questions",
+                "ordering": ["created_date"],
             },
         ),
         migrations.CreateModel(
-            name='TriviaCategory',
+            name="TriviaCategory",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('updated_date', models.DateField(auto_now=True)),
-                ('uid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='Public identifier')),
-                ('name', models.CharField(max_length=100, verbose_name='Trivia Category Name')),
-                ('description', models.TextField(verbose_name='Trivia category description')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateField(auto_now_add=True)),
+                ("updated_date", models.DateField(auto_now=True)),
+                (
+                    "uid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="Public identifier",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=100, verbose_name="Trivia Category Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(verbose_name="Trivia category description"),
+                ),
             ],
             options={
-                'verbose_name': 'Trivia Category',
-                'verbose_name_plural': 'Trivia Categories',
-                'ordering': ['name'],
+                "verbose_name": "Trivia Category",
+                "verbose_name_plural": "Trivia Categories",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='UserTriviaLog',
+            name="UserTriviaLog",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('updated_date', models.DateField(auto_now=True)),
-                ('session_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('total_correct_answers', models.IntegerField()),
-                ('total_wrong_answers', models.IntegerField()),
-                ('total_time_spent_in_seconds', models.IntegerField()),
-                ('trivia_category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='trivia.triviacategory')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateField(auto_now_add=True)),
+                ("updated_date", models.DateField(auto_now=True)),
+                (
+                    "session_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("total_correct_answers", models.IntegerField()),
+                ("total_wrong_answers", models.IntegerField()),
+                ("total_time_spent_in_seconds", models.IntegerField()),
+                (
+                    "trivia_category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="trivia.triviacategory",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'User Trivia Logs',
-                'ordering': ['created_date'],
+                "verbose_name_plural": "User Trivia Logs",
+                "ordering": ["created_date"],
             },
         ),
     ]

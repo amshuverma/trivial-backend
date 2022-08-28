@@ -9,6 +9,7 @@ class TriviaCategoryOutSchema(Schema):
     name: str
     description: str
 
+
 class TriviaCategoryInSchema(Schema):
     name: str
     description: str

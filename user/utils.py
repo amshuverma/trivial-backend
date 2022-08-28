@@ -54,13 +54,10 @@ def validate_email(email):
 
 passwordValidationSchema = PasswordValidator()
 
-passwordValidationSchema\
-.min(8)\
-.max(100)\
-.has().uppercase()\
-.has().lowercase()\
-.has().digits()\
-.has().no().spaces()
+passwordValidationSchema.min(8).max(
+    100
+).has().uppercase().has().lowercase().has().digits().has().no().spaces()
+
 
 def validate_password(password):
     return passwordValidationSchema.validate(password)

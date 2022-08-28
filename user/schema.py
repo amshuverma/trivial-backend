@@ -1,8 +1,6 @@
 from ninja import Schema
 from ninja.errors import ValidationError
-from uuid import UUID
-
-from pydantic import validator, root_validator
+from pydantic import root_validator, validator
 
 from .utils import validate_email, validate_password
 
@@ -54,6 +52,7 @@ class UserLoginSchema(Schema):
 class CurrentUserSchema(Schema):
     email: str
     refresh: str
+
 
 class UserOutSchema(Schema):
     email: str

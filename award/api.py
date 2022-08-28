@@ -1,12 +1,12 @@
-from ninja import Router
 from typing import List
 
+from ninja import Router
 from user.api import AuthBearer
 
 from .models import Award as AwardModel
 from .schema import AwardSchema
 
-router = Router(auth=AuthBearer())
+router = Router()
 
 
 @router.get("/", response=List[AwardSchema])

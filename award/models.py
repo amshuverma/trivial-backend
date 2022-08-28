@@ -1,8 +1,9 @@
-from tabnanny import verbose
 import uuid
-from django.db import models
-from django.conf import settings
+from tabnanny import verbose
+
 from abstract_models import TimeStampedModel
+from django.conf import settings
+from django.db import models
 
 
 class Award(TimeStampedModel):
